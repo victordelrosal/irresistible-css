@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<title>Floating Quantum Buttons</title>
 <style>
 :root {
     --quantum-void: #000000;
@@ -16,40 +17,39 @@
 }
 
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    /* display: flex; */ /* Removed for free positioning */
+    /* justify-content: center; */ /* Removed */
+    /* align-items: center; */ /* Removed */
     min-height: 100vh;
     background: radial-gradient(circle at center, var(--quantum-void) 0%, var(--nebula-core) 100%);
     margin: 0;
-    overflow: hidden;
+    overflow: hidden; /* Important: prevent scrollbars */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: relative; /* Needed for absolute positioning of children */
 }
 
 .quantum-button-wrapper {
-    position: relative;
+    position: absolute; /* Changed for JS positioning */
     perspective: 1200px;
+    /* Added for potential performance boost */
+    will-change: transform;
+    /* We'll set width/height via JS later if needed, or rely on content */
 }
 
 .quantum-button {
     position: relative;
-    padding: 2.5rem 5rem;
+    padding: 2.5rem 5rem; /* Adjust padding if needed for different sizes */
     font-size: 1.8rem;
     font-weight: 800;
     color: rgba(255,255,255,0.98);
-    background: linear-gradient(
-        135deg,
-        var(--sweet-purple) 0%,
-        var(--hyperjump) 40%,
-        var(--singularity) 70%,
-        var(--candy-pink) 100%
-    );
+    /* Background will be set dynamically via JS */
+    /* background: linear-gradient(...) */
     border: none;
     border-radius: 60px;
-    cursor: pointer;
+    cursor: default; /* Changed from pointer - it's a screensaver */
     overflow: hidden;
-    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    box-shadow: 
+    transition: transform 0.05s linear; /* Smooth out movement slightly */
+    box-shadow:
         0 0 50px rgba(123, 31, 255, 0.5),
         0 0 100px rgba(0, 20, 137, 0.3),
         0 10px 20px rgba(0, 0, 0, 0.4);
@@ -87,26 +87,9 @@ body {
     border-radius: 57px;
 }
 
-
-
-.quantum-button:hover {
-    transform: 
-        scale(1.08) 
-        perspective(1000px) 
-        rotateX(10deg) 
-        rotateY(5deg)
-        translateZ(20px);
-    box-shadow: 
-        0 0 80px var(--hyperjump),
-        0 0 120px rgba(119, 2, 255, 0.6),
-        inset 0 0 30px rgba(255,255,255,0.15);
-    letter-spacing: 6px;
-}
-
-.quantum-button:active {
-    transform: scale(0.96) rotateX(0) rotateY(0);
-    filter: brightness(1.3) contrast(1.2);
-}
+/* --- Removed Hover/Active Transform Styles --- */
+/* .quantum-button:hover { ... } */
+/* .quantum-button:active { ... } */
 
 /* Text styling and animation */
 .neon-pulse {
@@ -114,7 +97,7 @@ body {
     z-index: 2;
     display: inline-block;
     transition: all 0.4s ease;
-    text-shadow: 
+    text-shadow:
         0 0 10px rgba(255, 255, 255, 0.8),
         0 0 20px var(--sugar-blue),
         0 0 40px var(--candy-pink);
@@ -131,26 +114,9 @@ body {
     100% { background-position: 100% 50%; }
 }
 
-.quantum-button:hover .neon-pulse {
-    transform: scale(1.15);
-    letter-spacing: 6px;
-    animation: pulseGlow 1.5s ease-in-out infinite;
-}
-
-@keyframes pulseGlow {
-    0%, 100% { 
-        text-shadow: 
-            0 0 15px rgba(255, 255, 255, 0.8),
-            0 0 30px var(--sugar-blue),
-            0 0 50px var(--candy-pink);
-    }
-    50% { 
-        text-shadow: 
-            0 0 25px #fff, 
-            0 0 50px var(--sugar-blue), 
-            0 0 80px var(--candy-pink);
-    }
-}
+/* --- Removed Hover Neon Pulse --- */
+/* .quantum-button:hover .neon-pulse { ... } */
+/* @keyframes pulseGlow { ... } */
 
 .holo-border {
     position: absolute;
@@ -182,6 +148,7 @@ body {
     height: 100%;
     pointer-events: none;
     filter: blur(1px);
+    z-index: 1; /* Ensure dots are above background but below text */
 }
 
 .quantum-dot {
@@ -201,7 +168,7 @@ body {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 5;
+    z-index: 5; /* Keep sprinkles on top */
 }
 
 .sprinkle {
@@ -220,30 +187,20 @@ body {
     100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
 }
 
-/* Super satisfying ripple effect */
-.ripple {
-    position: absolute;
-    border-radius: 50%;
-    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.9), rgba(119, 2, 255, 0.6));
-    transform: scale(0);
-    animation: rippleEffect 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
-    pointer-events: none;
-}
-
-@keyframes rippleEffect {
-    to {
-        transform: scale(5);
-        opacity: 0;
-    }
-}
+/* --- Removed Ripple Effect (click-based) --- */
+/* .ripple { ... } */
+/* @keyframes rippleEffect { ... } */
 
 /* Floating orbs around button */
 .floating-orbs {
     position: absolute;
+    /* Adjust size relative to button if needed, or fixed */
     width: 140%;
     height: 140%;
+    left: -20%; /* Center the larger orb container */
+    top: -20%;
     pointer-events: none;
-    z-index: -2;
+    z-index: -2; /* Behind the button */
 }
 
 .orb {
@@ -260,158 +217,323 @@ body {
     50% { transform: translate(0, -15px); }
     75% { transform: translate(-10px, -5px); }
 }
+
 </style>
 </head>
 <body>
-<div class="quantum-button-wrapper">
-    <div class="floating-orbs" id="orbsContainer"></div>
-    <button class="quantum-button">
-        <div class="holo-border"></div>
-        <span class="neon-pulse">IRRESISTIBLE</span>
-        <div class="quantum-dots"></div>
-        <div class="candy-sprinkles" id="sprinklesContainer"></div>
-        <div class="gloss"></div>
-    </button>
-</div>
-
 <script>
-const button = document.querySelector('.quantum-button');
-const dotsContainer = document.querySelector('.quantum-dots');
-const sprinklesContainer = document.getElementById('sprinklesContainer');
-const orbsContainer = document.getElementById('orbsContainer');
-
-// Create quantum particles
-function createParticles() {
-    for (let i = 0; i < 15; i++) {
-        const dot = document.createElement('div');
-        dot.className = 'quantum-dot';
-        dot.style.left = `${Math.random() * 100}%`;
-        dot.style.top = `${Math.random() * 100}%`;
-        const size = Math.random() * 10 + 3;
-        dot.style.width = dot.style.height = `${size}px`;
-        dot.style.animationDelay = `${Math.random() * 1.5}s`;
-        dotsContainer.appendChild(dot);
-    }
-}
-
-// Create delicious candy sprinkles
-function createSprinkles() {
-    for (let i = 0; i < 25; i++) {
-        const sprinkle = document.createElement('div');
-        sprinkle.className = 'sprinkle';
-        sprinkle.style.left = `${Math.random() * 120 - 10}%`;
-        sprinkle.style.top = `${Math.random() * 120 - 10}%`;
-        sprinkle.style.transform = `rotate(${Math.random() * 360}deg)`;
-        sprinkle.style.animationDelay = `${Math.random() * 3}s`;
-        sprinklesContainer.appendChild(sprinkle);
-    }
-}
-
-// Create floating orbs around the button
-function createOrbs() {
-    const colors = [
-        'rgba(119, 2, 255, 0.4)',
-        'rgba(255, 54, 185, 0.4)', 
-        'rgba(0, 229, 255, 0.4)',
-        'rgba(167, 66, 255, 0.4)'
+    const container = document.body;
+    const numButtons = 8;
+    const buttons = [];
+    const baseColors = [
+        'var(--sweet-purple)',
+        'var(--hyperjump)',
+        'var(--singularity)',
+        'var(--candy-pink)',
+        'var(--sugar-blue)',
+        'var(--void-edge)',
+        'var(--quantum-tunnel)'
     ];
-    
-    for (let i = 0; i < 8; i++) {
-        const orb = document.createElement('div');
-        orb.className = 'orb';
-        const size = Math.random() * 40 + 30;
-        orb.style.width = orb.style.height = `${size}px`;
-        orb.style.left = `${Math.random() * 100}%`;
-        orb.style.top = `${Math.random() * 100}%`;
-        orb.style.background = colors[Math.floor(Math.random() * colors.length)];
-        orb.style.animationDuration = `${8 + Math.random() * 7}s`;
-        orb.style.animationDelay = `${Math.random() * 5}s`;
-        orbsContainer.appendChild(orb);
+
+    // --- Helper Functions ---
+
+    function getRandomColor() {
+        return baseColors[Math.floor(Math.random() * baseColors.length)];
     }
-}
 
-createParticles();
-createSprinkles();
-createOrbs();
+    function getRandomGradient() {
+        // Generate a 4-color gradient with slightly randomized stops
+        const colors = [getRandomColor(), getRandomColor(), getRandomColor(), getRandomColor()];
+        const stops = [
+            0,
+            Math.floor(Math.random() * 20) + 30, // 30-50%
+            Math.floor(Math.random() * 20) + 60, // 60-80%
+            100
+        ];
+        return `linear-gradient(135deg, ${colors[0]} ${stops[0]}%, ${colors[1]} ${stops[1]}%, ${colors[2]} ${stops[2]}%, ${colors[3]} ${stops[3]}%)`;
+    }
 
-// 3D hologram effect based on mouse position
-button.addEventListener('mousemove', (e) => {
-    const rect = button.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width;
-    const y = (e.clientY - rect.top) / rect.height;
-    
-    const rx = (y - 0.5) * 20;
-    const ry = (x - 0.5) * -20;
-    
-    button.style.transform = `
-        scale(1.05) 
-        perspective(1000px) 
-        rotateX(${rx}deg) 
-        rotateY(${ry}deg)
-        translateZ(15px)
-    `;
-    
-    // Dynamically adjust shadow based on mouse position
-    const shadowX = (x - 0.5) * 20;
-    const shadowY = (y - 0.5) * 20;
-    button.style.boxShadow = `
-        ${shadowX}px ${shadowY}px 50px rgba(123, 31, 255, 0.5),
-        0 0 100px rgba(0, 20, 137, 0.3),
-        0 10px 20px rgba(0, 0, 0, 0.4)
-    `;
-});
+    // Function to create particles INSIDE a specific button
+    function createParticles(dotsContainer) {
+        dotsContainer.innerHTML = ''; // Clear existing if any
+        for (let i = 0; i < 15; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'quantum-dot';
+            dot.style.left = `${Math.random() * 100}%`;
+            dot.style.top = `${Math.random() * 100}%`;
+            const size = Math.random() * 8 + 2; // Slightly smaller dots
+            dot.style.width = dot.style.height = `${size}px`;
+            dot.style.animationDelay = `${Math.random() * 1.5}s`;
+            dotsContainer.appendChild(dot);
+        }
+    }
 
-button.addEventListener('mouseleave', () => {
-    button.style.transform = 'scale(1) rotateX(0) rotateY(0) translateZ(10px)';
-    button.style.boxShadow = `
-        0 0 50px rgba(123, 31, 255, 0.5),
-        0 0 100px rgba(0, 20, 137, 0.3),
-        0 10px 20px rgba(0, 0, 0, 0.4)
-    `;
-});
-
-// Super satisfying click effect with multiple ripples
-button.addEventListener('click', function(e) {
-    const rect = button.getBoundingClientRect();
-    
-    // Create main ripple
-    createRipple(e.clientX - rect.left, e.clientY - rect.top, rect.width, rect.height);
-    
-    // Create additional ripples for extra satisfaction
-    setTimeout(() => {
-        createRipple(rect.width/2, rect.height/2, rect.width, rect.height);
-    }, 150);
-    
-    // Burst of sprinkles on click
-    for (let i = 0; i < 10; i++) {
-        setTimeout(() => {
+    // Function to create sprinkles INSIDE a specific button
+    function createSprinkles(sprinklesContainer) {
+        sprinklesContainer.innerHTML = ''; // Clear existing if any
+        for (let i = 0; i < 20; i++) { // Reduced sprinkle count slightly
             const sprinkle = document.createElement('div');
             sprinkle.className = 'sprinkle';
-            sprinkle.style.left = `${50 + (Math.random() * 40 - 20)}%`;
-            sprinkle.style.top = `${50 + (Math.random() * 40 - 20)}%`;
+            sprinkle.style.left = `${Math.random() * 120 - 10}%`;
+            sprinkle.style.top = `${Math.random() * 120 - 10}%`;
             sprinkle.style.transform = `rotate(${Math.random() * 360}deg)`;
+            sprinkle.style.animationDelay = `${Math.random() * 3}s`;
             sprinklesContainer.appendChild(sprinkle);
-            
-            // Remove after animation completes
-            setTimeout(() => sprinkle.remove(), 3000);
-        }, i * 50);
+        }
     }
-});
 
-function createRipple(x, y, width, height) {
-    const ripple = document.createElement('span');
-    ripple.classList.add('ripple');
-    const size = Math.max(width, height) * 1.5;
-    ripple.style.width = ripple.style.height = size + 'px';
-    ripple.style.left = `${x - size/2}px`;
-    ripple.style.top = `${y - size/2}px`;
-    button.appendChild(ripple);
-    
-    // Remove ripple when animation ends
-    ripple.addEventListener('animationend', () => {
-        ripple.remove();
-    });
-}
+    // Function to create orbs AROUND a specific button
+    function createOrbs(orbsContainer) {
+        orbsContainer.innerHTML = ''; // Clear existing if any
+        const orbColors = [
+            'rgba(119, 2, 255, 0.4)', 'rgba(255, 54, 185, 0.4)',
+            'rgba(0, 229, 255, 0.4)', 'rgba(167, 66, 255, 0.4)'
+        ];
+        for (let i = 0; i < 6; i++) { // Reduced orb count slightly
+            const orb = document.createElement('div');
+            orb.className = 'orb';
+            const size = Math.random() * 30 + 20; // Slightly smaller orbs
+            orb.style.width = orb.style.height = `${size}px`;
+            orb.style.left = `${Math.random() * 100}%`;
+            orb.style.top = `${Math.random() * 100}%`;
+            orb.style.background = orbColors[Math.floor(Math.random() * orbColors.length)];
+            orb.style.animationDuration = `${8 + Math.random() * 7}s`;
+            orb.style.animationDelay = `${Math.random() * 5}s`;
+            orbsContainer.appendChild(orb);
+        }
+    }
+
+
+    // --- Button Creation ---
+    for (let i = 0; i < numButtons; i++) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'quantum-button-wrapper';
+
+        // Create the button's inner HTML structure
+        wrapper.innerHTML = `
+            <div class="floating-orbs"></div>
+            <button class="quantum-button">
+                <div class="holo-border"></div>
+                <span class="neon-pulse">BOUNCE</span>
+                <div class="quantum-dots"></div>
+                <div class="candy-sprinkles"></div>
+                <div class="gloss"></div>
+            </button>
+        `;
+
+        const buttonElement = wrapper.querySelector('.quantum-button');
+        buttonElement.style.background = getRandomGradient(); // Apply unique gradient
+
+        // Get the specific containers for this button instance
+        const orbsContainer = wrapper.querySelector('.floating-orbs');
+        const dotsContainer = wrapper.querySelector('.quantum-dots');
+        const sprinklesContainer = wrapper.querySelector('.candy-sprinkles');
+
+        // Create effects specific to this button
+        createOrbs(orbsContainer);
+        createParticles(dotsContainer);
+        createSprinkles(sprinklesContainer);
+
+
+        container.appendChild(wrapper);
+
+        // Wait for the element to be added and rendered to get dimensions
+        // Using a small timeout - a more robust way might use MutationObserver or ResizeObserver
+        setTimeout(() => {
+             const rect = wrapper.getBoundingClientRect();
+             const buttonData = {
+                element: wrapper,
+                width: rect.width,
+                height: rect.height,
+                x: Math.random() * (window.innerWidth - rect.width),
+                y: Math.random() * (window.innerHeight - rect.height),
+                vx: (Math.random() - 0.5) * 4, // Initial velocity x (-2 to 2)
+                vy: (Math.random() - 0.5) * 4, // Initial velocity y (-2 to 2)
+                radius: Math.max(rect.width, rect.height) / 2, // Simple radius for collision
+                mass: Math.PI * (Math.max(rect.width, rect.height) / 2)**2 // Mass proportional to area for physics
+            };
+
+            // Ensure initial position is valid
+            buttonData.x = Math.max(0, Math.min(buttonData.x, window.innerWidth - buttonData.width));
+            buttonData.y = Math.max(0, Math.min(buttonData.y, window.innerHeight - buttonData.height));
+
+            wrapper.style.transform = `translate(${buttonData.x}px, ${buttonData.y}px)`;
+            buttons.push(buttonData);
+
+             // Start animation only after all buttons potentially have dimensions
+            if (buttons.length === numButtons) {
+                 // Small delay to ensure rendering before first animation frame
+                requestAnimationFrame(animate);
+            }
+        }, 50); // Small delay for rendering
+    }
+
+
+    // --- Animation and Physics ---
+    let lastTimestamp = 0;
+    const minSpeed = 0.5; // Prevent buttons from stopping completely
+    const maxSpeed = 5;   // Cap maximum speed
+
+
+    function animate(timestamp) {
+        if (!lastTimestamp) lastTimestamp = timestamp;
+        const deltaTime = (timestamp - lastTimestamp) / 16.67; // Normalize time step (approx 60fps)
+        lastTimestamp = timestamp;
+
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+
+        buttons.forEach((btn, i) => {
+            // Apply velocity
+            btn.x += btn.vx * deltaTime;
+            btn.y += btn.vy * deltaTime;
+
+            // Wall collision
+            let bounced = false;
+            if (btn.x <= 0) {
+                btn.x = 0;
+                btn.vx = Math.abs(btn.vx) * 0.9; // Reverse and dampen slightly
+                bounced = true;
+            } else if (btn.x + btn.width >= screenWidth) {
+                btn.x = screenWidth - btn.width;
+                btn.vx = -Math.abs(btn.vx) * 0.9; // Reverse and dampen slightly
+                bounced = true;
+            }
+
+            if (btn.y <= 0) {
+                btn.y = 0;
+                btn.vy = Math.abs(btn.vy) * 0.9; // Reverse and dampen slightly
+                bounced = true;
+            } else if (btn.y + btn.height >= screenHeight) {
+                btn.y = screenHeight - btn.height;
+                btn.vy = -Math.abs(btn.vy) * 0.9; // Reverse and dampen slightly
+                bounced = true;
+            }
+
+            // Apply slight visual 'squash' on bounce
+            if (bounced) {
+                btn.element.style.transition = 'transform 0.1s ease-out'; // Faster transition for bounce effect
+                // Example squash - adjust axis based on collision edge
+                // This is a simple visual effect, not physics accurate squash
+                 if (Math.abs(btn.vx) > Math.abs(btn.vy)) { // Horizontal bounce
+                     btn.element.style.transform = `translate(${btn.x}px, ${btn.y}px) scale(0.95, 1.05)`;
+                 } else { // Vertical bounce
+                     btn.element.style.transform = `translate(${btn.x}px, ${btn.y}px) scale(1.05, 0.95)`;
+                 }
+                 // Reset scale after a short delay
+                 setTimeout(() => {
+                     if (btn.element) { // Check if element still exists
+                        btn.element.style.transition = 'transform 0.05s linear'; // Reset to normal movement transition
+                        btn.element.style.transform = `translate(${btn.x}px, ${btn.y}px) scale(1, 1)`;
+                     }
+                 }, 100);
+            } else {
+                 // Normal movement update
+                 btn.element.style.transform = `translate(${btn.x}px, ${btn.y}px) scale(1, 1)`;
+            }
+
+
+            // Button-to-button collision (check against subsequent buttons)
+            for (let j = i + 1; j < buttons.length; j++) {
+                const otherBtn = buttons[j];
+
+                const dx = (otherBtn.x + otherBtn.width / 2) - (btn.x + btn.width / 2);
+                const dy = (otherBtn.y + otherBtn.height / 2) - (btn.y + btn.height / 2);
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const minDistance = btn.radius + otherBtn.radius; // Using radius for simplicity
+
+                if (distance < minDistance) {
+                    // Collision detected! Apply elastic collision resolution
+                    resolveCollision(btn, otherBtn);
+
+                    // Simple visual effect on collision
+                    applyCollisionEffect(btn);
+                    applyCollisionEffect(otherBtn);
+                }
+            }
+
+             // Enforce min/max speed
+             const speed = Math.sqrt(btn.vx**2 + btn.vy**2);
+             if (speed < minSpeed && speed > 0.01) {
+                 const factor = minSpeed / speed;
+                 btn.vx *= factor;
+                 btn.vy *= factor;
+             } else if (speed > maxSpeed) {
+                 const factor = maxSpeed / speed;
+                 btn.vx *= factor;
+                 btn.vy *= factor;
+             }
+        });
+
+        requestAnimationFrame(animate);
+    }
+
+    function applyCollisionEffect(btn) {
+         // Quick scale effect - adjust as desired
+         btn.element.style.transition = 'transform 0.08s ease-out';
+         btn.element.style.transform = `translate(${btn.x}px, ${btn.y}px) scale(1.08)`;
+         setTimeout(() => {
+              if(btn.element) {
+                btn.element.style.transition = 'transform 0.05s linear'; // Back to normal
+                btn.element.style.transform = `translate(${btn.x}px, ${btn.y}px) scale(1)`;
+              }
+         }, 80);
+    }
+
+
+    // 2D Elastic Collision Resolution (Rotated Axis)
+    function resolveCollision(p1, p2) {
+        const dx = p1.x - p2.x;
+        const dy = p1.y - p2.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const nx = dx / dist; // Normal vector x
+        const ny = dy / dist; // Normal vector y
+        const tx = -ny;       // Tangent vector x
+        const ty = nx;        // Tangent vector y
+
+        // Project velocities onto normal and tangent vectors
+        const dpTan1 = p1.vx * tx + p1.vy * ty;
+        const dpTan2 = p2.vx * tx + p2.vy * ty;
+        const dpNorm1 = p1.vx * nx + p1.vy * ny;
+        const dpNorm2 = p2.vx * nx + p2.vy * ny;
+
+        // Conservation of momentum in 1D (normal direction)
+        const m1 = (dpNorm1 * (p1.mass - p2.mass) + 2 * p2.mass * dpNorm2) / (p1.mass + p2.mass);
+        const m2 = (dpNorm2 * (p2.mass - p1.mass) + 2 * p1.mass * dpNorm1) / (p1.mass + p2.mass);
+
+        // Update velocities by converting back from tangent/normal
+        // Dampen slightly on collision to prevent energy gain
+        const DAMPING = 0.95;
+        p1.vx = (tx * dpTan1 + nx * m1) * DAMPING;
+        p1.vy = (ty * dpTan1 + ny * m1) * DAMPING;
+        p2.vx = (tx * dpTan2 + nx * m2) * DAMPING;
+        p2.vy = (ty * dpTan2 + ny * m2) * DAMPING;
+
+         // Separation step to prevent sticking (move them apart slightly along normal)
+         const overlap = (p1.radius + p2.radius) - dist;
+         if (overlap > 0) {
+             const separationFactor = overlap / 2 + 0.1; // Move slightly more than half overlap
+             p1.x += nx * separationFactor;
+             p1.y += ny * separationFactor;
+             p2.x -= nx * separationFactor;
+             p2.y -= ny * separationFactor;
+         }
+    }
+
+     // Handle window resize
+     window.addEventListener('resize', () => {
+         // Re-check button positions after resize to ensure they are within bounds
+         const screenWidth = window.innerWidth;
+         const screenHeight = window.innerHeight;
+         buttons.forEach(btn => {
+             btn.x = Math.max(0, Math.min(btn.x, screenWidth - btn.width));
+             btn.y = Math.max(0, Math.min(btn.y, screenHeight - btn.height));
+             // No need to update element transform here, animation loop will handle it
+         });
+     });
+
+    // Initial kick-off is handled after buttons are created and measured
+
 </script>
 </body>
 </html>
