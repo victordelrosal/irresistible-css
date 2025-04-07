@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+:root {
+    --quantum-void: #000000;
+    --nebula-core: #000036;
+    --hyperjump: #7702FF;
+    --void-edge: #5D04FF;
+    --quantum-tunnel: #3908FF;
+    --singularity: #1F0AFF;
+    --event-horizon: #0B00FF;
+    --candy-pink: #FF36B9;
+    --sweet-purple: #A742FF;
+    --sugar-blue: #00E5FF;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: radial-gradient(circle at center, var(--quantum-void) 0%, var(--nebula-core) 100%);
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.quantum-button-wrapper {
+    position: relative;
+    perspective: 1200px;
+}
+
+.quantum-button {
+    position: relative;
+    padding: 2.5rem 5rem;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: rgba(255,255,255,0.98);
+    background: linear-gradient(
+        135deg,
+        var(--sweet-purple) 0%,
+        var(--hyperjump) 40%,
+        var(--singularity) 70%,
+        var(--candy-pink) 100%
+    );
+    border: none;
+    border-radius: 60px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    box-shadow: 
+        0 0 50px rgba(123, 31, 255, 0.5),
+        0 0 100px rgba(0, 20, 137, 0.3),
+        0 10px 20px rgba(0, 0, 0, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    backdrop-filter: blur(10px);
+    border: 1.5px solid rgba(255,255,255,0.2);
+    transform-style: preserve-3d;
+    transform: translateZ(10px);
+}
+
+/* Delicious glossy overlay */
+.gloss {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.4), transparent);
+    border-radius: 60px 60px 100px 100px;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+}
+
+.quantum-button::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    background: linear-gradient(
+        135deg,
+        rgba(0,0,0,0.2) 0%,
+        rgba(255,255,255,0.08) 50%,
+        rgba(0,0,0,0.2) 100%
+    );
+    border-radius: 57px;
+}
+
+
+
+.quantum-button:hover {
+    transform: 
+        scale(1.08) 
+        perspective(1000px) 
+        rotateX(10deg) 
+        rotateY(5deg)
+        translateZ(20px);
+    box-shadow: 
+        0 0 80px var(--hyperjump),
+        0 0 120px rgba(119, 2, 255, 0.6),
+        inset 0 0 30px rgba(255,255,255,0.15);
+    letter-spacing: 6px;
+}
+
+.quantum-button:active {
+    transform: scale(0.96) rotateX(0) rotateY(0);
+    filter: brightness(1.3) contrast(1.2);
+}
+
+/* Text styling and animation */
+.neon-pulse {
+    position: relative;
+    z-index: 2;
+    display: inline-block;
+    transition: all 0.4s ease;
+    text-shadow: 
+        0 0 10px rgba(255, 255, 255, 0.8),
+        0 0 20px var(--sugar-blue),
+        0 0 40px var(--candy-pink);
+    background: linear-gradient(90deg, #fff, #f0f0ff, #fff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shinyText 3s linear infinite;
+    font-family: 'Arial Rounded MT Bold', 'Segoe UI', sans-serif;
+}
+
+@keyframes shinyText {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+.quantum-button:hover .neon-pulse {
+    transform: scale(1.15);
+    letter-spacing: 6px;
+    animation: pulseGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+    0%, 100% { 
+        text-shadow: 
+            0 0 15px rgba(255, 255, 255, 0.8),
+            0 0 30px var(--sugar-blue),
+            0 0 50px var(--candy-pink);
+    }
+    50% { 
+        text-shadow: 
+            0 0 25px #fff, 
+            0 0 50px var(--sugar-blue), 
+            0 0 80px var(--candy-pink);
+    }
+}
+
+.holo-border {
+    position: absolute;
+    inset: -4px;
+    border-radius: 64px;
+    background: linear-gradient(
+        45deg,
+        var(--candy-pink),
+        var(--sugar-blue),
+        var(--sweet-purple),
+        var(--candy-pink)
+    );
+    background-size: 300% 300%;
+    z-index: -1;
+    filter: blur(15px);
+    opacity: 0.85;
+    animation: borderFlow 6s linear infinite;
+}
+
+@keyframes borderFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.quantum-dots {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    filter: blur(1px);
+}
+
+.quantum-dot {
+    position: absolute;
+    background: radial-gradient(circle at center, var(--sweet-purple) 0%, transparent 70%);
+    animation: quantumBurst 1.5s ease-out infinite;
+}
+
+@keyframes quantumBurst {
+    0% { transform: scale(0); opacity: 1; }
+    100% { transform: scale(2.5); opacity: 0; }
+}
+
+/* Delicious candy sprinkles */
+.candy-sprinkles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.sprinkle {
+    position: absolute;
+    background: linear-gradient(90deg, var(--candy-pink), var(--sugar-blue));
+    height: 6px;
+    width: 2px;
+    border-radius: 5px;
+    opacity: 0;
+    animation: sprinkleFloat 3s ease-out infinite;
+}
+
+@keyframes sprinkleFloat {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+}
+
+/* Super satisfying ripple effect */
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.9), rgba(119, 2, 255, 0.6));
+    transform: scale(0);
+    animation: rippleEffect 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+    pointer-events: none;
+}
+
+@keyframes rippleEffect {
+    to {
+        transform: scale(5);
+        opacity: 0;
+    }
+}
+
+/* Floating orbs around button */
+.floating-orbs {
+    position: absolute;
+    width: 140%;
+    height: 140%;
+    pointer-events: none;
+    z-index: -2;
+}
+
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(8px);
+    opacity: 0.6;
+    animation: floatOrb 8s infinite;
+}
+
+@keyframes floatOrb {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(10px, -10px); }
+    50% { transform: translate(0, -15px); }
+    75% { transform: translate(-10px, -5px); }
+}
+</style>
+</head>
+<body>
+<div class="quantum-button-wrapper">
+    <div class="floating-orbs" id="orbsContainer"></div>
+    <button class="quantum-button">
+        <div class="holo-border"></div>
+        <span class="neon-pulse">IRRESISTIBLE</span>
+        <div class="quantum-dots"></div>
+        <div class="candy-sprinkles" id="sprinklesContainer"></div>
+        <div class="gloss"></div>
+    </button>
+</div>
+
+<script>
+const button = document.querySelector('.quantum-button');
+const dotsContainer = document.querySelector('.quantum-dots');
+const sprinklesContainer = document.getElementById('sprinklesContainer');
+const orbsContainer = document.getElementById('orbsContainer');
+
+// Create quantum particles
+function createParticles() {
+    for (let i = 0; i < 15; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'quantum-dot';
+        dot.style.left = `${Math.random() * 100}%`;
+        dot.style.top = `${Math.random() * 100}%`;
+        const size = Math.random() * 10 + 3;
+        dot.style.width = dot.style.height = `${size}px`;
+        dot.style.animationDelay = `${Math.random() * 1.5}s`;
+        dotsContainer.appendChild(dot);
+    }
+}
+
+// Create delicious candy sprinkles
+function createSprinkles() {
+    for (let i = 0; i < 25; i++) {
+        const sprinkle = document.createElement('div');
+        sprinkle.className = 'sprinkle';
+        sprinkle.style.left = `${Math.random() * 120 - 10}%`;
+        sprinkle.style.top = `${Math.random() * 120 - 10}%`;
+        sprinkle.style.transform = `rotate(${Math.random() * 360}deg)`;
+        sprinkle.style.animationDelay = `${Math.random() * 3}s`;
+        sprinklesContainer.appendChild(sprinkle);
+    }
+}
+
+// Create floating orbs around the button
+function createOrbs() {
+    const colors = [
+        'rgba(119, 2, 255, 0.4)',
+        'rgba(255, 54, 185, 0.4)', 
+        'rgba(0, 229, 255, 0.4)',
+        'rgba(167, 66, 255, 0.4)'
+    ];
+    
+    for (let i = 0; i < 8; i++) {
+        const orb = document.createElement('div');
+        orb.className = 'orb';
+        const size = Math.random() * 40 + 30;
+        orb.style.width = orb.style.height = `${size}px`;
+        orb.style.left = `${Math.random() * 100}%`;
+        orb.style.top = `${Math.random() * 100}%`;
+        orb.style.background = colors[Math.floor(Math.random() * colors.length)];
+        orb.style.animationDuration = `${8 + Math.random() * 7}s`;
+        orb.style.animationDelay = `${Math.random() * 5}s`;
+        orbsContainer.appendChild(orb);
+    }
+}
+
+createParticles();
+createSprinkles();
+createOrbs();
+
+// 3D hologram effect based on mouse position
+button.addEventListener('mousemove', (e) => {
+    const rect = button.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    
+    const rx = (y - 0.5) * 20;
+    const ry = (x - 0.5) * -20;
+    
+    button.style.transform = `
+        scale(1.05) 
+        perspective(1000px) 
+        rotateX(${rx}deg) 
+        rotateY(${ry}deg)
+        translateZ(15px)
+    `;
+    
+    // Dynamically adjust shadow based on mouse position
+    const shadowX = (x - 0.5) * 20;
+    const shadowY = (y - 0.5) * 20;
+    button.style.boxShadow = `
+        ${shadowX}px ${shadowY}px 50px rgba(123, 31, 255, 0.5),
+        0 0 100px rgba(0, 20, 137, 0.3),
+        0 10px 20px rgba(0, 0, 0, 0.4)
+    `;
+});
+
+button.addEventListener('mouseleave', () => {
+    button.style.transform = 'scale(1) rotateX(0) rotateY(0) translateZ(10px)';
+    button.style.boxShadow = `
+        0 0 50px rgba(123, 31, 255, 0.5),
+        0 0 100px rgba(0, 20, 137, 0.3),
+        0 10px 20px rgba(0, 0, 0, 0.4)
+    `;
+});
+
+// Super satisfying click effect with multiple ripples
+button.addEventListener('click', function(e) {
+    const rect = button.getBoundingClientRect();
+    
+    // Create main ripple
+    createRipple(e.clientX - rect.left, e.clientY - rect.top, rect.width, rect.height);
+    
+    // Create additional ripples for extra satisfaction
+    setTimeout(() => {
+        createRipple(rect.width/2, rect.height/2, rect.width, rect.height);
+    }, 150);
+    
+    // Burst of sprinkles on click
+    for (let i = 0; i < 10; i++) {
+        setTimeout(() => {
+            const sprinkle = document.createElement('div');
+            sprinkle.className = 'sprinkle';
+            sprinkle.style.left = `${50 + (Math.random() * 40 - 20)}%`;
+            sprinkle.style.top = `${50 + (Math.random() * 40 - 20)}%`;
+            sprinkle.style.transform = `rotate(${Math.random() * 360}deg)`;
+            sprinklesContainer.appendChild(sprinkle);
+            
+            // Remove after animation completes
+            setTimeout(() => sprinkle.remove(), 3000);
+        }, i * 50);
+    }
+});
+
+function createRipple(x, y, width, height) {
+    const ripple = document.createElement('span');
+    ripple.classList.add('ripple');
+    const size = Math.max(width, height) * 1.5;
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = `${x - size/2}px`;
+    ripple.style.top = `${y - size/2}px`;
+    button.appendChild(ripple);
+    
+    // Remove ripple when animation ends
+    ripple.addEventListener('animationend', () => {
+        ripple.remove();
+    });
+}
+</script>
+</body>
+</html>
