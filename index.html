@@ -38,27 +38,29 @@ body {
 
 .quantum-button {
     position: relative;
-    padding: 2.5rem 5rem; /* Adjust padding if needed for different sizes */
+    width: 200px;               /* Increased size from 150px to 200px */
+    height: 200px;              /* Increased size from 150px to 200px */
+    padding: 0;                 /* Removed padding */
+    display: flex;              /* Center content horizontally */
+    align-items: center;        /* Center content vertically */
+    justify-content: center;    /* Center content horizontally */
+    border-radius: 50%;         /* Make button circular */
     font-size: 1.8rem;
     font-weight: 800;
     color: rgba(255,255,255,0.98);
     /* Background will be set dynamically via JS */
     /* background: linear-gradient(...) */
     border: none;
-    border-radius: 60px;
     cursor: default; /* Changed from pointer - it's a screensaver */
     overflow: hidden;
     transition: transform 0.05s linear; /* Smooth out movement slightly */
-    box-shadow:
-        0 0 50px rgba(123, 31, 255, 0.5),
-        0 0 100px rgba(0, 20, 137, 0.3),
-        0 10px 20px rgba(0, 0, 0, 0.4);
+    box-shadow: inset 0 -8px 15px rgba(0,0,0,0.3), 0 8px 20px rgba(0,0,0,0.3);  /* Added 3D shadows */
     text-transform: uppercase;
     letter-spacing: 3px;
-    backdrop-filter: blur(10px);
+    backdrop-filter: none; /* Removed blur effect */
     border: 1.5px solid rgba(255,255,255,0.2);
     transform-style: preserve-3d;
-    transform: translateZ(10px);
+    transform: translateZ(10px) perspective(600px) rotateX(5deg);  /* Subtle 3D tilt */
 }
 
 /* Delicious glossy overlay */
@@ -68,8 +70,8 @@ body {
     left: 0;
     right: 0;
     height: 60%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.4), transparent);
-    border-radius: 60px 60px 100px 100px;
+    background: radial-gradient(ellipse at top left, rgba(255,255,255,0.6), transparent 60%);  /* Enhanced highlight */
+    border-radius: 50%;         /* Adjust gloss to a circle */
     pointer-events: none;
     mix-blend-mode: overlay;
 }
@@ -84,7 +86,7 @@ body {
         rgba(255,255,255,0.08) 50%,
         rgba(0,0,0,0.2) 100%
     );
-    border-radius: 57px;
+    border-radius: 50%;         /* Ensure overlay follows circular shape */
 }
 
 /* --- Removed Hover/Active Transform Styles --- */
@@ -121,7 +123,7 @@ body {
 .holo-border {
     position: absolute;
     inset: -4px;
-    border-radius: 64px;
+    border-radius: 50%;         /* Change border to circle */
     background: linear-gradient(
         45deg,
         var(--candy-pink),
@@ -131,9 +133,10 @@ body {
     );
     background-size: 300% 300%;
     z-index: -1;
-    filter: blur(15px);
+    filter: none; /* Removed blur effect */
     opacity: 0.85;
     animation: borderFlow 6s linear infinite;
+    border: 2px solid rgba(255,255,255,0.3);  /* Subtle solid border for depth */
 }
 
 @keyframes borderFlow {
@@ -347,9 +350,9 @@ body {
                 height: rect.height,
                 x: Math.random() * (window.innerWidth - rect.width),
                 y: Math.random() * (window.innerHeight - rect.height),
-                vx: (Math.random() - 0.5) * 4, // Initial velocity x (-2 to 2)
-                vy: (Math.random() - 0.5) * 4, // Initial velocity y (-2 to 2)
-                radius: Math.max(rect.width, rect.height) / 2, // Simple radius for collision
+                vx: (Math.random() - 0.5) * 6, // Increased velocity range (-3 to 3)
+                vy: (Math.random() - 0.5) * 6, // Increased velocity range (-3 to 3)
+                radius: Math.max(rect.width, rect.height) / 2, // Use full half-size for collision
                 mass: Math.PI * (Math.max(rect.width, rect.height) / 2)**2 // Mass proportional to area for physics
             };
 
@@ -371,8 +374,8 @@ body {
 
     // --- Animation and Physics ---
     let lastTimestamp = 0;
-    const minSpeed = 0.5; // Prevent buttons from stopping completely
-    const maxSpeed = 5;   // Cap maximum speed
+    const minSpeed = 0.8; // Increased minimum speed
+    const maxSpeed = 7;   // Increased maximum speed
 
 
     function animate(timestamp) {
@@ -440,13 +443,21 @@ body {
                 const dx = (otherBtn.x + otherBtn.width / 2) - (btn.x + btn.width / 2);
                 const dy = (otherBtn.y + otherBtn.height / 2) - (btn.y + btn.height / 2);
                 const distance = Math.sqrt(dx * dx + dy * dy);
-                const minDistance = btn.radius + otherBtn.radius; // Using radius for simplicity
+                
+                // Use full collision radii so buttons actually touch before bouncing
+                const minDistance = btn.radius + otherBtn.radius;
 
                 if (distance < minDistance) {
                     // Collision detected! Apply elastic collision resolution
                     resolveCollision(btn, otherBtn);
 
-                    // Simple visual effect on collision
+                    // Get random gradient on collision to change appearance
+                    const buttonElement = btn.element.querySelector('.quantum-button');
+                    const otherButtonElement = otherBtn.element.querySelector('.quantum-button');
+                    buttonElement.style.background = getRandomGradient();
+                    otherButtonElement.style.background = getRandomGradient();
+                    
+                    // Visual effect on collision
                     applyCollisionEffect(btn);
                     applyCollisionEffect(otherBtn);
                 }
@@ -502,17 +513,17 @@ body {
         const m2 = (dpNorm2 * (p2.mass - p1.mass) + 2 * p1.mass * dpNorm1) / (p1.mass + p2.mass);
 
         // Update velocities by converting back from tangent/normal
-        // Dampen slightly on collision to prevent energy gain
-        const DAMPING = 0.95;
+        // Dampen slightly on collision to prevent energy gain but keep more energy
+        const DAMPING = 0.98; // Increased from 0.95 for more energetic collisions
         p1.vx = (tx * dpTan1 + nx * m1) * DAMPING;
         p1.vy = (ty * dpTan1 + ny * m1) * DAMPING;
         p2.vx = (tx * dpTan2 + nx * m2) * DAMPING;
         p2.vy = (ty * dpTan2 + ny * m2) * DAMPING;
 
-         // Separation step to prevent sticking (move them apart slightly along normal)
+         // Separation step: use collision radii 
          const overlap = (p1.radius + p2.radius) - dist;
          if (overlap > 0) {
-             const separationFactor = overlap / 2 + 0.1; // Move slightly more than half overlap
+             const separationFactor = overlap / 2; // Just enough to prevent overlap
              p1.x += nx * separationFactor;
              p1.y += ny * separationFactor;
              p2.x -= nx * separationFactor;
