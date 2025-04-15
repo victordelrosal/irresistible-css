@@ -3,6 +3,9 @@
 <head>
 <title>Floating Quantum Buttons</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap');
+
 :root {
     --quantum-void: #000000;
     --nebula-core: #000036;
@@ -221,12 +224,67 @@ body {
     75% { transform: translate(-10px, -5px); }
 }
 
+.inner-ball {
+    position: absolute;
+    width: 60%;
+    height: 60%;
+    top: 20%;
+    left: 20%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(200,200,200,0.8));
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+    z-index: 3;
+    transition: transform 0.1s ease-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.inner-ball .marker-number {
+    font-family: 'Cinzel', serif;
+    font-size: 3.2rem;
+    color: #222;
+    text-shadow:
+        0 2px 6px rgba(0,0,0,0.35),
+        0 1px 0 #bbb,
+        0 -1px 0 #fff,
+        1px 1px 2px #aaa;
+    letter-spacing: 0.01em;
+    filter: brightness(1.05) contrast(1.15);
+    user-select: none;
+    pointer-events: none;
+    font-weight: 700;
+    background: none;
+}
+
+/* Number container styling for labels outside the ball */
+.embossed-number {
+    position: absolute;
+    z-index: 10;
+    top: 50%;  /* Center vertically */
+    left: 100%; /* Place immediately to the right of the ball */
+    transform: translateY(-50%) translateX(20px); /* Center vertically, add space to the right */
+    background: linear-gradient(135deg, var(--candy-pink), var(--sugar-blue));
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset 0 -2px 4px rgba(255,255,255,0.5);
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: rgba(255,255,255,0.9);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    pointer-events: none;
+}
+
 </style>
 </head>
 <body>
 <script>
     const container = document.body;
-    const numButtons = 8;
+    const numButtons = 18; // Changed from 8 to 10
     const buttons = [];
     const baseColors = [
         'var(--sweet-purple)',
@@ -312,12 +370,13 @@ body {
         const wrapper = document.createElement('div');
         wrapper.className = 'quantum-button-wrapper';
 
-        // Create the button's inner HTML structure
         wrapper.innerHTML = `
             <div class="floating-orbs"></div>
             <button class="quantum-button">
                 <div class="holo-border"></div>
-                <span class="neon-pulse">BOUNCE</span>
+                <div class="inner-ball">
+                    <span class="marker-number">${i + 1}</span>
+                </div>
                 <div class="quantum-dots"></div>
                 <div class="candy-sprinkles"></div>
                 <div class="gloss"></div>
@@ -337,7 +396,6 @@ body {
         createParticles(dotsContainer);
         createSprinkles(sprinklesContainer);
 
-
         container.appendChild(wrapper);
 
         // Wait for the element to be added and rendered to get dimensions
@@ -353,7 +411,13 @@ body {
                 vx: (Math.random() - 0.5) * 6, // Increased velocity range (-3 to 3)
                 vy: (Math.random() - 0.5) * 6, // Increased velocity range (-3 to 3)
                 radius: Math.max(rect.width, rect.height) / 2, // Use full half-size for collision
-                mass: Math.PI * (Math.max(rect.width, rect.height) / 2)**2 // Mass proportional to area for physics
+                mass: Math.PI * (Math.max(rect.width, rect.height) / 2)**2, // Mass proportional to area for physics
+                // Initialize inner ball physics state:
+                innerBallX: 0,
+                innerBallY: 0,
+                innerBallVx: 0,
+                innerBallVy: 0,
+                innerBallEl: wrapper.querySelector('.inner-ball')
             };
 
             // Ensure initial position is valid
@@ -436,6 +500,17 @@ body {
             }
 
 
+            // --- Update inner ball physics ---
+            const k = 0.1, damping = 0.9;
+            // Spring force pulling inner ball to center (0,0)
+            btn.innerBallVx += -k * btn.innerBallX;
+            btn.innerBallVy += -k * btn.innerBallY;
+            btn.innerBallVx *= damping;
+            btn.innerBallVy *= damping;
+            btn.innerBallX += btn.innerBallVx;
+            btn.innerBallY += btn.innerBallVy;
+            btn.innerBallEl.style.transform = `translate(${btn.innerBallX}px, ${btn.innerBallY}px)`;
+
             // Button-to-button collision (check against subsequent buttons)
             for (let j = i + 1; j < buttons.length; j++) {
                 const otherBtn = buttons[j];
@@ -480,13 +555,15 @@ body {
     }
 
     function applyCollisionEffect(btn) {
-         // Quick scale effect - adjust as desired
          btn.element.style.transition = 'transform 0.08s ease-out';
          btn.element.style.transform = `translate(${btn.x}px, ${btn.y}px) scale(1.08)`;
+         // Apply an impulse to the inner ball based on collision
+         btn.innerBallVx += btn.vx * 0.1;
+         btn.innerBallVy += btn.vy * 0.1;
          setTimeout(() => {
-              if(btn.element) {
-                btn.element.style.transition = 'transform 0.05s linear'; // Back to normal
-                btn.element.style.transform = `translate(${btn.x}px, ${btn.y}px) scale(1)`;
+              if (btn.element) {
+                 btn.element.style.transition = 'transform 0.05s linear';
+                 btn.element.style.transform = `translate(${btn.x}px, ${btn.y}px) scale(1)`;
               }
          }, 80);
     }
